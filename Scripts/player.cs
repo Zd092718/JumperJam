@@ -10,18 +10,42 @@ public partial class player : CharacterBody2D
 	private float gravity = 15f;
 	private float maxFallVelocity = 1000f;
 	private Vector2 viewportSize;
+	private float jumpVelocity = -800;
+	private Vector2 newVelocity;
+	private AnimationPlayer anim;
+
 	public override void _Ready()
 	{
+		anim = GetNode<AnimationPlayer>("AnimationPlayer");
 		viewportSize = GetViewportRect().Size;
+		newVelocity = Velocity;
 	}
 
 	public override void _Process(double delta)
 	{
+		if (Velocity.Y > 0)
+		{
+			if (anim.CurrentAnimation != "fall")
+			{
+				anim.Play("fall");
+			}
+		}
+		else if (Velocity.Y < 0)
+		{
+			if (anim.CurrentAnimation != "jump")
+			{
+				anim.Play("jump");
+			}
+		}
+	}
+
+	public void Jump()
+	{
+		newVelocity.Y = jumpVelocity;
 	}
 
 	public override void _PhysicsProcess(double delta)
 	{
-		var newVelocity = Velocity;
 		var newGlobalPosition = GlobalPosition;
 		// Applying gravity to player
 		newVelocity.Y += gravity;

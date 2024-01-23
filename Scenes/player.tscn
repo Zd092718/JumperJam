@@ -7,8 +7,8 @@
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_o1ydb"]
 size = Vector2(38, 20)
 
-[sub_resource type="Animation" id="Animation_jag0t"]
-resource_name = "fall"
+[sub_resource type="Animation" id="Animation_fm4gl"]
+length = 0.001
 tracks/0/type = "value"
 tracks/0/imported = false
 tracks/0/enabled = true
@@ -46,8 +46,8 @@ tracks/2/keys = {
 "values": [Vector2(0.35, 0.35)]
 }
 
-[sub_resource type="Animation" id="Animation_fm4gl"]
-length = 0.001
+[sub_resource type="Animation" id="Animation_jag0t"]
+resource_name = "fall"
 tracks/0/type = "value"
 tracks/0/imported = false
 tracks/0/enabled = true
@@ -132,9 +132,11 @@ _data = {
 }
 
 [node name="Player" type="CharacterBody2D"]
+collision_mask = 2
 script = ExtResource("1_4x6du")
 
 [node name="Sprite2D" type="Sprite2D" parent="."]
+z_index = 100
 position = Vector2(0, -46)
 scale = Vector2(0.35, 0.35)
 texture = ExtResource("1_tnxtu")
