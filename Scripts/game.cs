@@ -7,7 +7,14 @@ public partial class game : Node2D
 	private PackedScene cameraScene;
 	private PackedScene platformScene;
 	private Camera2D camera = null;
+	private Vector2 viewportSize;
+
+	// level gen variables
 	private Node2D platformContainer;
+	private float startPlatformY;
+	private float yDistanceBetweenPlatforms = 100f;
+	private int levelSize = 50;
+	private int platformWidth = 136;
 
 
 	public override void _Ready()
@@ -19,14 +26,28 @@ public partial class game : Node2D
 		camera = cameraScene.Instantiate() as Camera2D;
 		AddChild(camera);
 
+		viewportSize = GetViewportRect().Size;
 		// Generate ground
 		GenerateGround();
+
+		// Generate rest of level
+		startPlatformY = viewportSize.Y - (yDistanceBetweenPlatforms * 2);
+		for (int i = 0; i < levelSize; i++)
+		{
+			var maxXPosition = viewportSize.X - platformWidth;
+			var randomX = (float)RandRange(0.0, maxXPosition);
+			Vector2 location;
+			location.X = randomX;
+			location.Y = startPlatformY - (yDistanceBetweenPlatforms * i);
+
+
+			Print(location);
+			CreatePlatform(location);
+		}
 	}
 
 	private void GenerateGround()
 	{
-		var viewportSize = GetViewportRect().Size;
-		var platformWidth = 136;
 		// Get platform count from viewport size and platform width
 		// Adding one to ensure no gaps
 		var groundLayerPlatformCount = (viewportSize.X / platformWidth) + 1;
