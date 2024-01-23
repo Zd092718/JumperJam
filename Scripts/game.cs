@@ -1,5 +1,6 @@
 using Godot;
 using System;
+using static Godot.GD;
 
 public partial class game : Node2D
 {
@@ -18,12 +19,29 @@ public partial class game : Node2D
 		camera = cameraScene.Instantiate() as Camera2D;
 		AddChild(camera);
 
-		CreatePlatform(new Vector2(100, 300));
+		// Generate ground
+		GenerateGround();
 	}
 
-	// Called every frame. 'delta' is the elapsed time since the previous frame.
+	private void GenerateGround()
+	{
+		var viewportSize = GetViewportRect().Size;
+		var platformWidth = 136;
+		// Get platform count from viewport size and platform width
+		// Adding one to ensure no gaps
+		var groundLayerPlatformCount = (viewportSize.X / platformWidth) + 1;
+		var groundLayerYOffset = 62;
+		// create platforms based on platform count 
+		for (int i = 0; i < groundLayerPlatformCount; i++)
+		{
+			Vector2 groundLocation = new Vector2(i * platformWidth, viewportSize.Y - groundLayerYOffset);
+			CreatePlatform(groundLocation);
+		}
+	}
+
 	public override void _Process(double delta)
 	{
+		// Debug keys
 		if (Input.IsActionJustPressed("quit"))
 		{
 			GetTree().Quit();
