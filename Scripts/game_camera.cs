@@ -5,12 +5,30 @@ public partial class game_camera : Camera2D
 {
 	private player _player;
 	private Vector2 newGlobalPosition;
+	private Vector2 viewportSize;
 	public override void _Ready()
 	{
 		newGlobalPosition = GlobalPosition;
-		newGlobalPosition.X = GetViewportRect().Size.X / 2;
-		
+		viewportSize = GetViewportRect().Size;
+		newGlobalPosition.X = viewportSize.X / 2;
+
+		LimitBottom = (int)viewportSize.Y;
+		LimitLeft = 0;
+		LimitRight = (int)viewportSize.X;
+
 		_player = GetNode<player>("/root/Main/Game/Player");
+	}
+
+	public override void _Process(double delta)
+	{
+		if (_player != null)
+		{
+			var limitDistance = 420;
+			if (LimitBottom > _player.GlobalPosition.Y + limitDistance)
+			{
+				LimitBottom = (int)_player.GlobalPosition.Y + limitDistance;
+			}
+		}
 	}
 
 	public override void _PhysicsProcess(double delta)
