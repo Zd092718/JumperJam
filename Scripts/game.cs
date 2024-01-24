@@ -12,14 +12,17 @@ public partial class game : Node2D
 	// level gen variables
 	private Node2D platformContainer;
 	private float startPlatformY;
-	private float yDistanceBetweenPlatforms = 100f;
+	private float yDistanceBetweenPlatforms = 150f;
 	private int levelSize = 50;
 	private int platformWidth = 136;
+	private int generatedPlatformCount = 0;
+	private CharacterBody2D player;
 
 
 	public override void _Ready()
 	{
 		platformContainer = GetNode<Node2D>("PlatformContainer");
+		player = GetNode<CharacterBody2D>("Player");
 
 		cameraScene = ResourceLoader.Load("res://scenes/game_camera.tscn") as PackedScene;
 		platformScene = ResourceLoader.Load("res://scenes/platform.tscn") as PackedScene;
@@ -27,22 +30,32 @@ public partial class game : Node2D
 		AddChild(camera);
 
 		viewportSize = GetViewportRect().Size;
-		// Generate ground
-		GenerateGround();
-
-		// Generate rest of level
+		generatedPlatformCount = 0;
 		startPlatformY = viewportSize.Y - (yDistanceBetweenPlatforms * 2);
+
+
+		GenerateLevel(startPlatformY, true);
+	}
+
+	public void GenerateLevel(float startY, bool generateGround)
+	{
+		if (generateGround == true)
+		{
+			GenerateGround();
+		}
+
 		for (int i = 0; i < levelSize; i++)
 		{
 			var maxXPosition = viewportSize.X - platformWidth;
 			var randomX = (float)RandRange(0.0, maxXPosition);
 			Vector2 location;
 			location.X = randomX;
-			location.Y = startPlatformY - (yDistanceBetweenPlatforms * i);
+			location.Y = startY - (yDistanceBetweenPlatforms * i);
 
 
 			Print(location);
 			CreatePlatform(location);
+			generatedPlatformCount++;
 		}
 	}
 
@@ -71,6 +84,17 @@ public partial class game : Node2D
 		{
 			GetTree().ReloadCurrentScene();
 		}
+		if (player != null)
+		{
+			var pY = player.GlobalPosition.Y;
+			var endOfLevelPos = startPlatformY - (generatedPlatformCount * yDistanceBetweenPlatforms);
+			var threshold = endOfLevelPos + (yDistanceBetweenPlatforms * 6);
+			if (pY <= threshold)
+			{
+				GenerateLevel(endOfLevelPos, false);
+			}
+		}
+
 	}
 
 	public Area2D CreatePlatform(Vector2 location)
