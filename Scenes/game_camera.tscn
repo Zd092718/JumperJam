@@ -5,3 +5,7 @@
 [node name="GameCamera" type="Camera2D"]
 limit_bottom = 900
 script = ExtResource("1_hojvd")
+
+[node name="Destroyer" type="Area2D" parent="."]
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Destroyer"]
