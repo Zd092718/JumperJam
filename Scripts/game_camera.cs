@@ -1,6 +1,8 @@
 using Godot;
 using System;
 using static Godot.GD;
+using Godot.Collections;
+using System.Linq;
 
 public partial class game_camera : Camera2D
 {
@@ -27,7 +29,7 @@ public partial class game_camera : Camera2D
 
 		//Setting the platform destroyer position
 		newDestroyerPosition = destroyer.Position;
-		newDestroyerPosition.Y = viewportSize.Y / 2 + 100;
+		newDestroyerPosition.Y = viewportSize.Y;
 		destroyer.Position = newDestroyerPosition;
 
 		//Setting up the collision shape
@@ -45,6 +47,23 @@ public partial class game_camera : Camera2D
 			if (LimitBottom > _player.GlobalPosition.Y + limitDistance)
 			{
 				LimitBottom = (int)_player.GlobalPosition.Y + limitDistance;
+			}
+		}
+
+		Array<Area2D> overlappingAreas = destroyer.GetOverlappingAreas();
+		if (overlappingAreas.Count > 0)
+		{
+			// Checking overlapping areas
+			foreach (Area2D area in overlappingAreas)
+			{
+				// Checking all platforms in group
+				foreach (Area2D platform in GetTree().GetNodesInGroup("platform").Cast<Area2D>())
+				{
+					if (area == platform)
+					{
+						area.QueueFree();
+					}
+				}
 			}
 		}
 	}
